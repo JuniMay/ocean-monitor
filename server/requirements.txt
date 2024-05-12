@@ -1,0 +1,6 @@
+flask
+flask-cors
+flask-sqlalchemy
+pymysql
+werkzeug
+watchdog
