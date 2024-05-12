@@ -12,6 +12,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import { getUsers, updateUserRole } from "../services/admin";
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -22,9 +25,22 @@ interface User {
 const AdminManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
 
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const navigate = useNavigate();
+
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (!isAuthenticated && user?.role !== "admin") {
+      navigate("/login");
+    } else {
+      fetchUsers();
+    }
+  }, [isAuthenticated, navigate, user]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const fetchUsers = async () => {
     try {

@@ -18,15 +18,27 @@ const Header: React.FC = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" margin={2}>
           海洋牧场监测系统
         </Typography>
+        <Button color="inherit" component={Link} to="/home">
+          首页
+        </Button>
+        <Button color="inherit" component={Link} to="/dashboard">
+          仪表盘
+        </Button>
+        <Typography sx={{ flexGrow: 1 }} />
         {isAuthenticated ? (
           <>
             <Button color="inherit" component={Link} to="/profile">
               {user?.username}
             </Button>
-            <Button color="inherit" onClick={handleLogout} component={Link}  to="/home">
+            <Button
+              color="inherit"
+              onClick={handleLogout}
+              component={Link}
+              to="/home"
+            >
               退出
             </Button>
           </>
