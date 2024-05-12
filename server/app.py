@@ -66,7 +66,7 @@ def get_users():
 def update_user_role(user_id):
     data = request.get_json()
     new_role = data["role"]
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if user:
         user.role = new_role
         db.session.commit()

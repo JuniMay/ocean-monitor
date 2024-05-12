@@ -27,6 +27,14 @@ const Header: React.FC = () => {
         <Button color="inherit" component={Link} to="/dashboard">
           仪表盘
         </Button>
+        {user?.role === "admin" ? (
+          // admin management
+          <Button color="inherit" component={Link} to="/admin">
+            管理员
+          </Button>
+        ) : (
+          <></>
+        )}
         <Typography sx={{ flexGrow: 1 }} />
         {isAuthenticated ? (
           <>
