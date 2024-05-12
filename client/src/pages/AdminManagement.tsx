@@ -75,8 +75,10 @@ const AdminManagement: React.FC = () => {
           </TableHead>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.username}</TableCell>
+              <TableRow key={user.id} hover>
+                <TableCell>
+                  <Typography>{user.username}</Typography>
+                </TableCell>
                 <TableCell>
                   <Select
                     value={user.role}
