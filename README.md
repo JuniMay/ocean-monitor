@@ -4,6 +4,8 @@
 
 使用 React + TypeScript + Flask + MySQL 实现的海洋牧场智慧可视化系统。
 
+GitHub 地址：[https://github.com/JuniMay/ocean-monitor](https://github.com/JuniMay/ocean-monitor)
+
 ## 运行
 
 确保安装了 Node.js 以及 MySQL。
