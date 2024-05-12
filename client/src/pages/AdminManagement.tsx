@@ -10,6 +10,8 @@ import {
   Paper,
   Select,
   MenuItem,
+  Alert,
+  Divider,
 } from "@mui/material";
 import { getUsers, updateUserRole } from "../services/admin";
 import { RootState } from "../store";
@@ -65,6 +67,9 @@ const AdminManagement: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         管理员管理
       </Typography>
+
+      <Alert severity="warning">请谨慎操作</Alert>
+      <Divider sx={{ my: 2 }} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
