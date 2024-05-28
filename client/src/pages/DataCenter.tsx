@@ -254,9 +254,6 @@ const DataCenter: React.FC = () => {
         </Grid>
       </form>
       <Divider sx={{ my: 2 }} />
-      <Button onClick={handleExport} variant="contained" color="secondary">
-        导出数据
-      </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
           <TableHead>
@@ -295,6 +292,10 @@ const DataCenter: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Divider sx={{ my: 2 }} />
+      <Button onClick={handleExport} variant="contained" color="secondary">
+        导出数据
+      </Button>
     </div>
   );
 };
