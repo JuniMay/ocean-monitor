@@ -76,6 +76,22 @@ const DataCenter: React.FC = () => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const response = await axios.get("/api/export/hydrodata", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "hydrodata.csv");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error exporting data:", error);
+    }
+  };
+
   if (!isAuthenticated) {
     return null;
   }
@@ -238,6 +254,9 @@ const DataCenter: React.FC = () => {
         </Grid>
       </form>
       <Divider sx={{ my: 2 }} />
+      <Button onClick={handleExport} variant="contained" color="secondary">
+        导出数据
+      </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
           <TableHead>

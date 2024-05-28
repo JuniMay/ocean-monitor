@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from models import db, User, HydroData
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import csv
+import io
 app = Flask(__name__)
 CORS(app)
 # https://stackoverflow.com/questions/27766794/switching-from-sqlite-to-mysql-with-flask-sqlalchemy
@@ -155,6 +157,41 @@ def delete_hydrodata(data_id):
     else:
         return jsonify({"message": "HydroData not found"}), 404
 
+
+@app.route("/api/export/hydrodata", methods=["GET"])
+def export_hydrodata():
+    hydrodata = HydroData.query.all()
+
+    def generate():
+        data = io.StringIO()
+        writer = csv.writer(data)
+
+        # 写入表头
+        writer.writerow([
+            "id", "location", "date", "water_temperature", "pH", "dissolved_oxygen",
+            "conductivity", "turbidity", "permanganate_index", "ammonia_nitrogen",
+            "total_phosphorus", "total_nitrogen"
+        ])
+
+        # 写入数据
+        for row in hydrodata:
+            writer.writerow([
+                row.id, row.location, row.date.strftime("%Y-%m-%d"), row.water_temperature,
+                row.pH, row.dissolved_oxygen, row.conductivity, row.turbidity,
+                row.permanganate_index, row.ammonia_nitrogen, row.total_phosphorus,
+                row.total_nitrogen
+            ])
+            data.seek(0)
+            yield data.read()
+            data.truncate(0)
+            data.seek(0)
+
+    headers = {
+        "Content-Disposition": "attachment; filename=hydrodata.csv",
+        "Content-Type": "text/csv",
+    }
+
+    return Response(generate(), headers=headers)
 
 # @app.route("api")
 if __name__ == "__main__":
