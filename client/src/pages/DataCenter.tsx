@@ -13,6 +13,7 @@ import {
   TextField,
   Button,
   Grid,
+  TablePagination,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
@@ -35,12 +36,13 @@ interface HydroData {
   site_condition?: string;  // Optional property
 }
 
-
 const DataCenter: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const [hydroData, setHydroData] = useState<HydroData[]>([]);
   const [newData, setNewData] = useState<Partial<HydroData>>({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -92,6 +94,15 @@ const DataCenter: React.FC = () => {
     } catch (error) {
       console.error("Error exporting data:", error);
     }
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   if (!isAuthenticated) {
@@ -249,14 +260,14 @@ const DataCenter: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                label="现场情况"
-                name="site_condition"
-                value={newData.site_condition || ""}
-                onChange={handleInputChange}
-                fullWidth
-              />
-           </Grid>
+            <TextField
+              label="现场情况"
+              name="site_condition"
+              value={newData.site_condition || ""}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">
               添加数据
@@ -266,48 +277,59 @@ const DataCenter: React.FC = () => {
       </form>
       <Divider sx={{ my: 2 }} />
       <TableContainer component={Paper}>
-  <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
-    <TableHead>
-      <TableRow>
-        <TableCell>ID</TableCell>
-        <TableCell>位置</TableCell>
-        <TableCell>日期</TableCell>
-        <TableCell>水温</TableCell>
-        <TableCell>pH</TableCell>
-        <TableCell>溶解氧</TableCell>
-        <TableCell>电导率</TableCell>
-        <TableCell>浊度</TableCell>
-        <TableCell>高锰酸盐指数</TableCell>
-        <TableCell>氨氮</TableCell>
-        <TableCell>总磷</TableCell>
-        <TableCell>总氮</TableCell>
-        <TableCell>现场情况</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {hydroData.map((row) => (
-        <TableRow key={row.id}>
-          <TableCell>{row.id}</TableCell>
-          <TableCell>{row.location}</TableCell>
-          <TableCell>{row.date}</TableCell>
-          <TableCell>{row.water_temperature}</TableCell>
-          <TableCell>{row.pH}</TableCell>
-          <TableCell>{row.dissolved_oxygen}</TableCell>
-          <TableCell>{row.conductivity}</TableCell>
-          <TableCell>{row.turbidity}</TableCell>
-          <TableCell>{row.permanganate_index}</TableCell>
-          <TableCell>{row.ammonia_nitrogen}</TableCell>
-          <TableCell>{row.total_phosphorus}</TableCell>
-          <TableCell>{row.total_nitrogen}</TableCell>
-          <TableCell>{row.site_condition}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableContainer>
-
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>位置</TableCell>
+              <TableCell>日期</TableCell>
+              <TableCell>水温</TableCell>
+              <TableCell>pH</TableCell>
+              <TableCell>溶解氧</TableCell>
+              <TableCell>电导率</TableCell>
+              <TableCell>浊度</TableCell>
+              <TableCell>高锰酸盐指数</TableCell>
+              <TableCell>氨氮</TableCell>
+              <TableCell>总磷</TableCell>
+              <TableCell>总氮</TableCell>
+              <TableCell>现场情况</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? hydroData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : hydroData
+                        ).map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.location}</TableCell>
+                <TableCell>{row.date}</TableCell>
+                <TableCell>{row.water_temperature}</TableCell>
+                <TableCell>{row.pH}</TableCell>
+                <TableCell>{row.dissolved_oxygen}</TableCell>
+                <TableCell>{row.conductivity}</TableCell>
+                <TableCell>{row.turbidity}</TableCell>
+                <TableCell>{row.permanganate_index}</TableCell>
+                <TableCell>{row.ammonia_nitrogen}</TableCell>
+                <TableCell>{row.total_phosphorus}</TableCell>
+                <TableCell>{row.total_nitrogen}</TableCell>
+                <TableCell>{row.site_condition || "N/A"}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={hydroData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
       <Divider sx={{ my: 2 }} />
-      <Button onClick={handleExport} variant="contained" color="secondary">
+      <Button variant="contained" color="secondary" onClick={handleExport}>
         导出数据
       </Button>
     </div>
@@ -315,3 +337,4 @@ const DataCenter: React.FC = () => {
 };
 
 export default DataCenter;
+
