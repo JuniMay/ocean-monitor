@@ -33,7 +33,7 @@ interface HydroData {
   ammonia_nitrogen: number;
   total_phosphorus: number;
   total_nitrogen: number;
-  site_condition?: string;  // Optional property
+  site_condition?: string; // Optional property
 }
 
 const DataCenter: React.FC = () => {
@@ -78,6 +78,35 @@ const DataCenter: React.FC = () => {
     } catch (error) {
       console.error("Error adding data:", error);
     }
+  };
+
+  const handleImport = async () => {
+    // 1. open file dialog
+    // 2. send post request with `file: ...` to /api/import/hydrodata
+    // 3. refresh data
+    // 4. clear the form
+    
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) {
+        return;
+      }
+      // post the file content in json format: { "csv": "..." }
+      const formData = new FormData();
+      formData.append("csv", file);
+      try {
+        await axios.post("/api/import/hydrodata", formData);
+        fetchData();
+        setNewData({});
+      } catch (error) {
+        console.error("Error importing data:", error);
+      }
+    };
+
+    input.click();
   };
 
   const handleExport = async () => {
@@ -268,10 +297,19 @@ const DataCenter: React.FC = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">
-              添加数据
-            </Button>
+          <Grid item>
+            <Grid container direction="row" spacing={2}>
+              <Grid item>
+                <Button type="submit" variant="contained" color="primary">
+                  添加数据
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button type="button" onClick={handleImport} variant="contained">
+                  从 CSV 导入
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </form>
