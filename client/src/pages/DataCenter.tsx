@@ -32,7 +32,9 @@ interface HydroData {
   ammonia_nitrogen: number;
   total_phosphorus: number;
   total_nitrogen: number;
+  site_condition?: string;  // Optional property
 }
+
 
 const DataCenter: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -246,6 +248,15 @@ const DataCenter: React.FC = () => {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="现场情况"
+                name="site_condition"
+                value={newData.site_condition || ""}
+                onChange={handleInputChange}
+                fullWidth
+              />
+           </Grid>
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">
               添加数据
@@ -255,43 +266,46 @@ const DataCenter: React.FC = () => {
       </form>
       <Divider sx={{ my: 2 }} />
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>位置</TableCell>
-              <TableCell>日期</TableCell>
-              <TableCell>水温</TableCell>
-              <TableCell>pH</TableCell>
-              <TableCell>溶解氧</TableCell>
-              <TableCell>电导率</TableCell>
-              <TableCell>浊度</TableCell>
-              <TableCell>高锰酸盐指数</TableCell>
-              <TableCell>氨氮</TableCell>
-              <TableCell>总磷</TableCell>
-              <TableCell>总氮</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {hydroData.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.location}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.water_temperature}</TableCell>
-                <TableCell>{row.pH}</TableCell>
-                <TableCell>{row.dissolved_oxygen}</TableCell>
-                <TableCell>{row.conductivity}</TableCell>
-                <TableCell>{row.turbidity}</TableCell>
-                <TableCell>{row.permanganate_index}</TableCell>
-                <TableCell>{row.ammonia_nitrogen}</TableCell>
-                <TableCell>{row.total_phosphorus}</TableCell>
-                <TableCell>{row.total_nitrogen}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+  <Table sx={{ minWidth: 650 }} size="small" aria-label="data">
+    <TableHead>
+      <TableRow>
+        <TableCell>ID</TableCell>
+        <TableCell>位置</TableCell>
+        <TableCell>日期</TableCell>
+        <TableCell>水温</TableCell>
+        <TableCell>pH</TableCell>
+        <TableCell>溶解氧</TableCell>
+        <TableCell>电导率</TableCell>
+        <TableCell>浊度</TableCell>
+        <TableCell>高锰酸盐指数</TableCell>
+        <TableCell>氨氮</TableCell>
+        <TableCell>总磷</TableCell>
+        <TableCell>总氮</TableCell>
+        <TableCell>现场情况</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {hydroData.map((row) => (
+        <TableRow key={row.id}>
+          <TableCell>{row.id}</TableCell>
+          <TableCell>{row.location}</TableCell>
+          <TableCell>{row.date}</TableCell>
+          <TableCell>{row.water_temperature}</TableCell>
+          <TableCell>{row.pH}</TableCell>
+          <TableCell>{row.dissolved_oxygen}</TableCell>
+          <TableCell>{row.conductivity}</TableCell>
+          <TableCell>{row.turbidity}</TableCell>
+          <TableCell>{row.permanganate_index}</TableCell>
+          <TableCell>{row.ammonia_nitrogen}</TableCell>
+          <TableCell>{row.total_phosphorus}</TableCell>
+          <TableCell>{row.total_nitrogen}</TableCell>
+          <TableCell>{row.site_condition}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+
       <Divider sx={{ my: 2 }} />
       <Button onClick={handleExport} variant="contained" color="secondary">
         导出数据

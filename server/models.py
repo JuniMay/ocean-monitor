@@ -21,3 +21,4 @@ class HydroData(db.Model):
     ammonia_nitrogen = db.Column(db.Float, nullable=False)  # 氨氮
     total_phosphorus = db.Column(db.Float, nullable=False)  # 总磷
     total_nitrogen = db.Column(db.Float, nullable=False)  # 总氮
+    site_condition = db.Column(db.String(100), nullable=True)  # 现场情况

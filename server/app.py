@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import csv
 import io
+import pandas as pd
 app = Flask(__name__)
 CORS(app)
 # https://stackoverflow.com/questions/27766794/switching-from-sqlite-to-mysql-with-flask-sqlalchemy
@@ -90,6 +91,7 @@ def add_hydrodata():
     ammonia_nitrogen = data["ammonia_nitrogen"]
     total_phosphorus = data["total_phosphorus"]
     total_nitrogen = data["total_nitrogen"]
+    site_condition = data["site_condition"]
 
     new_data = HydroData(
         location=location,
@@ -102,7 +104,8 @@ def add_hydrodata():
         permanganate_index=permanganate_index,
         ammonia_nitrogen=ammonia_nitrogen,
         total_phosphorus=total_phosphorus,
-        total_nitrogen=total_nitrogen
+        total_nitrogen=total_nitrogen,
+        site_condition=site_condition
     )
     db.session.add(new_data)
     db.session.commit()
@@ -123,7 +126,8 @@ def get_hydrodata():
         "permanganate_index": data.permanganate_index,
         "ammonia_nitrogen": data.ammonia_nitrogen,
         "total_phosphorus": data.total_phosphorus,
-        "total_nitrogen": data.total_nitrogen
+        "total_nitrogen": data.total_nitrogen,
+        "site_condition": data.site_condition
     } for data in hydrodata])
 
 @app.route("/api/hydrodata/<int:data_id>", methods=["PUT"])
@@ -142,6 +146,7 @@ def update_hydrodata(data_id):
         hydrodata.ammonia_nitrogen = data["ammonia_nitrogen"]
         hydrodata.total_phosphorus = data["total_phosphorus"]
         hydrodata.total_nitrogen = data["total_nitrogen"]
+        hydrodata.site_condition = data["site_condition"]  # 更新站点情况
         db.session.commit()
         return jsonify({"message": "HydroData updated successfully"})
     else:
@@ -170,7 +175,7 @@ def export_hydrodata():
         writer.writerow([
             "id", "location", "date", "water_temperature", "pH", "dissolved_oxygen",
             "conductivity", "turbidity", "permanganate_index", "ammonia_nitrogen",
-            "total_phosphorus", "total_nitrogen"
+            "total_phosphorus", "total_nitrogen", "site_condition"
         ])
 
         # 写入数据
@@ -179,7 +184,7 @@ def export_hydrodata():
                 row.id, row.location, row.date.strftime("%Y-%m-%d"), row.water_temperature,
                 row.pH, row.dissolved_oxygen, row.conductivity, row.turbidity,
                 row.permanganate_index, row.ammonia_nitrogen, row.total_phosphorus,
-                row.total_nitrogen
+                row.total_nitrogen, row.site_condition
             ])
             data.seek(0)
             yield data.read()
@@ -192,6 +197,48 @@ def export_hydrodata():
     }
 
     return Response(generate(), headers=headers)
+
+
+@app.route("/api/import/hydrodata", methods=["POST"])
+def import_hydrodata():
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"message": "No selected file"}), 400
+
+    if file and file.filename.endswith('.csv'):
+        try:
+            # 读取CSV文件
+            df = pd.read_csv(file)
+
+            # 将DataFrame中的每一行插入数据库
+            for _, row in df.iterrows():
+                new_data = HydroData(
+                    location=row['location'],
+                    date=datetime.strptime(row['date'], "%Y-%m-%d"),
+                    water_temperature=row['water_temperature'],
+                    pH=row['pH'],
+                    dissolved_oxygen=row['dissolved_oxygen'],
+                    conductivity=row['conductivity'],
+                    turbidity=row['turbidity'],
+                    permanganate_index=row['permanganate_index'],
+                    ammonia_nitrogen=row['ammonia_nitrogen'],
+                    total_phosphorus=row['total_phosphorus'],
+                    total_nitrogen=row['total_nitrogen'],
+                    site_condition=row['site_condition']
+                )
+                db.session.add(new_data)
+
+            db.session.commit()
+            return jsonify({"message": "HydroData imported successfully"}), 200
+
+        except Exception as e:
+            return jsonify({"message": f"Error processing file: {str(e)}"}), 500
+    else:
+        return jsonify({"message": "Invalid file type, please upload a CSV file"}), 400
 
 # @app.route("api")
 if __name__ == "__main__":
