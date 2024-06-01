@@ -31,7 +31,7 @@ npm start
 docker-compose up --build
 ```
 
-已经挂载容器的`/app`目录到`client`，直接更新代码可触发Flask调试器的实时重载功能。
+已经挂载容器的`/app`目录到`client`和`server`，直接更新代码可触发Flask和React的热重载功能。
 
 ## 项目运行界面
 
