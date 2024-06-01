@@ -4,3 +4,5 @@ flask-sqlalchemy
 pymysql
 werkzeug
 watchdog
+pandas
+cryptography
