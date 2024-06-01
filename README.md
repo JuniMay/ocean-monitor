@@ -21,8 +21,17 @@ python app.py
 然后在 `client` 目录下运行：
 
 ```bash
+npm install
 npm start
 ```
+
+或者，使用Docker:
+
+```bash
+docker-compose up --build
+```
+
+已经挂载容器的`/app`目录到`client`，直接更新代码可触发Flask调试器的实时重载功能。
 
 ## 项目运行界面
 

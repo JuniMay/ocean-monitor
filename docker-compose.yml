@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - DB_USER=root
+      - DB_PASSWORD=Tt102938!
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=ocean_monitor
+    depends_on:
+      db: 
+        condition: service_healthy
+    volumes:
+      - ./server:/app
+
+
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - server
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Tt102938!
+      MYSQL_DATABASE: ocean_monitor
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: Tt102938!
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

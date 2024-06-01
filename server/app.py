@@ -5,17 +5,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import csv
 import io
+import os
 import pandas as pd
 from werkzeug.datastructures import FileStorage
 from math import isnan
 
 app = Flask(__name__)
 CORS(app)
-# https://stackoverflow.com/questions/27766794/switching-from-sqlite-to-mysql-with-flask-sqlalchemy
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    # just for testing
-    "mysql+pymysql://root:Tt102938!@127.0.0.1:3306/ocean_monitor"
-)
+# Read database connection details from environment variables
+db_user = os.getenv('DB_USER', 'root')
+db_password = os.getenv('DB_PASSWORD', 'Tt102938!')
+db_host = os.getenv('DB_HOST', '127.0.0.1')
+db_port = os.getenv('DB_PORT', '3306')
+db_name = os.getenv('DB_NAME', 'ocean_monitor')
+
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 db.init_app(app)
 
 
@@ -283,4 +287,4 @@ def import_hydrodata():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
