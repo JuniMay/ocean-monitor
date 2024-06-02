@@ -1,8 +1,8 @@
-flask
-flask-cors
-flask-sqlalchemy
-pymysql
-werkzeug
-watchdog
-pandas
-cryptography
+flask==3.0.3
+flask-cors==4.0.1
+flask-sqlalchemy==3.1.1
+pymysql==1.1.1
+werkzeug==3.0.3
+watchdog==4.0.1
+pandas==2.2.2
+cryptography==42.0.7
