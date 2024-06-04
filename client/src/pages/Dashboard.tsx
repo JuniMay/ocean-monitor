@@ -98,44 +98,14 @@ const Dashboard: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const calculateDissolvedOxygenScore = (dissolvedOxygen: number): number => {
-    if (dissolvedOxygen >= 7.5) return 5;
-    if (dissolvedOxygen >= 6) return 4;
-    if (dissolvedOxygen >= 5) return 3;
-    if (dissolvedOxygen >= 3) return 2;
-    if (dissolvedOxygen >= 2) return 1;
-    return 0;
-  };
-
-  const calculatepHScore = (pH: number): number => {
-    if (pH >= 6 && pH <= 9) return 5;
-    return 0;
-  };
-
-  const calculatepermanganate_indexScore = (permanganate_index: number): number => {
-    if (permanganate_index <= 2) return 5;
-    if (permanganate_index <= 4) return 4;
-    if (permanganate_index <= 6) return 3;
-    if (permanganate_index <= 10) return 2;
-    if (permanganate_index <= 15) return 1;
-    return 0;
-  };
-
-  const calculateammonia_nitrogenScore = (ammonia_nitrogen: number): number => {
-    if (ammonia_nitrogen <= 0.15) return 5;
-    if (ammonia_nitrogen <= 0.5) return 4;
-    if (ammonia_nitrogen <= 1) return 3;
-    if (ammonia_nitrogen <= 1.5) return 2;
-    if (ammonia_nitrogen <= 2) return 1;
-    return 0;
-  };
-
-  const calculatetotal_phosphorusScore = (total_phosphorus: number): number => {
-    if (total_phosphorus <= 0.02) return 5;
-    if (total_phosphorus <= 0.1) return 4;
-    if (total_phosphorus <= 0.2) return 3;
-    if (total_phosphorus <= 0.3) return 2;
-    if (total_phosphorus <= 0.4) return 1;
+  const calculateScore = (dissolvedOxygen: number,permanganate_index: number,ammonia_nitrogen: number,total_phosphorus: number,pH: number): number => {
+    if(pH >= 6 && pH <= 9){
+      if (dissolvedOxygen >= 7.5 && permanganate_index <= 2 && ammonia_nitrogen <= 0.15 && total_phosphorus <= 0.02) return 5;
+      if (dissolvedOxygen >= 6 && permanganate_index <= 4 && ammonia_nitrogen <= 0.5 && total_phosphorus <= 0.1) return 4;
+      if (dissolvedOxygen >= 5 && permanganate_index <= 6 && ammonia_nitrogen <= 1 && total_phosphorus <= 0.2) return 3;
+      if (dissolvedOxygen >= 3 && permanganate_index <= 10 && ammonia_nitrogen <= 1.5 && total_phosphorus <= 0.3) return 2;
+      if (dissolvedOxygen >= 2 && permanganate_index <= 15 && ammonia_nitrogen <= 2 && total_phosphorus <= 0.4) return 1;
+    }
     return 0;
   };
 
@@ -209,16 +179,16 @@ const Dashboard: React.FC = () => {
                   <>
                     <Typography component="legend">最新水质信息获取时间: {latestData.date}</Typography>
                     <Divider sx={{ my: 2 }} />
-                    <Typography component="legend">水质得分：{(calculateDissolvedOxygenScore(latestData.dissolved_oxygen)
-                                                    +calculatepHScore(latestData.pH)
-                                                    +calculatepermanganate_indexScore(latestData.permanganate_index)
-                                                    +calculateammonia_nitrogenScore(latestData.ammonia_nitrogen)
-                                                    +calculatetotal_phosphorusScore(latestData.total_phosphorus))/5}</Typography>
-                    <Rating name="read-only" value={(calculateDissolvedOxygenScore(latestData.dissolved_oxygen)
-                                                    +calculatepHScore(latestData.pH)
-                                                    +calculatepermanganate_indexScore(latestData.permanganate_index)
-                                                    +calculateammonia_nitrogenScore(latestData.ammonia_nitrogen)
-                                                    +calculatetotal_phosphorusScore(latestData.total_phosphorus))/5} readOnly precision={0.5} />
+                    <Typography component="legend">水质得分：{calculateScore(latestData.dissolved_oxygen,
+                                                            latestData.permanganate_index,
+                                                            latestData.ammonia_nitrogen,
+                                                            latestData.total_phosphorus,
+                                                            latestData.pH)}</Typography>
+                    <Rating name="read-only" value={calculateScore(latestData.dissolved_oxygen,
+                                                            latestData.permanganate_index,
+                                                            latestData.ammonia_nitrogen,
+                                                            latestData.total_phosphorus,
+                                                            latestData.pH)} readOnly precision={0.5} />
                     <Divider sx={{ my: 2 }} />
                   </>
                 )}
