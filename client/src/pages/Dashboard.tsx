@@ -1,46 +1,62 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Divider, Grid, Rating, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, Alert } from "@mui/material";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import axios from "axios";
+
+// 定义接口来表示从API返回的数据结构
+interface HydroData {
+  id: number;
+  location: string;
+  date: string;
+  water_temperature: number;
+  pH: number;
+  dissolved_oxygen: number;
+  conductivity: number;
+  turbidity: number;
+  permanganate_index: number;
+  ammonia_nitrogen: number;
+  total_phosphorus: number;
+  total_nitrogen: number;
+  site_condition?: string; // Optional property
+}
+
+// 定义接口来表示图表数据
+interface ChartData {
+  name: string;
+  temperature: number | null;
+}
 
 const Dashboard: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
+  const [data, setData] = useState<ChartData[]>([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
+    } else {
+      // Fetch data from API
+      axios.get<HydroData[]>("/api/hydrodata")
+        .then(response => {
+          const formattedData = response.data.map((item: HydroData): ChartData => ({
+            name: item.date,
+            temperature: item.water_temperature,
+          }));
+          setData(formattedData);
+        })
+        .catch(error => {
+          console.error("Error fetching hydrodata:", error);
+        });
     }
   }, [isAuthenticated, navigate]);
 
   if (!isAuthenticated) {
     return null;
   }
-
-  const data = [
-    { name: "1月", temperature: 19 },
-    { name: "2月", temperature: 20 },
-    { name: "3月", temperature: 25 },
-    { name: "4月", temperature: 26 },
-    { name: "5月", temperature: 30 },
-    { name: "6月", temperature: 33 },
-    { name: "7月", temperature: 35 },
-    { name: "8月", temperature: 38 },
-    { name: "9月", temperature: 20 },
-    { name: "10月", temperature: 15 },
-    { name: "11月", temperature: 11 },
-    { name: "12月", temperature: 8 },
-  ];
 
   return (
     <div>
