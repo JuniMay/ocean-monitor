@@ -47,6 +47,16 @@ def register():
     username = data["username"]
     password = data["password"]
     role = data["role"]
+    
+    # Check if username already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"message": "用户名已存在"}), 409
+    # Check if a admin already exists
+    existing_admin = User.query.filter_by(role="admin").first()
+    if role == "admin" and existing_admin:
+        return jsonify({"message": "您不能注册管理员账户"}), 409
+
     new_user = User(
         username=username, role=role, password_hash=generate_password_hash(password)
     )

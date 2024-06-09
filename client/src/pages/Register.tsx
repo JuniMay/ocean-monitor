@@ -8,16 +8,19 @@ import {
   MenuItem,
   Grid,
   Link,
+  Alert,
 } from "@mui/material";
 import { login as loginAction } from '../features/auth/authSlice';
 import { register } from "../services/auth";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,6 +30,12 @@ const Register: React.FC = () => {
       dispatch(loginAction(userData));
       navigate("/dashboard");
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const serverMessage = error.response.data.message || "注册失败，请重试";
+        setErrorMessage(serverMessage);
+      } else {
+        setErrorMessage("注册失败，请重试");
+      }
       console.error("Registration failed", error);
     }
   };
@@ -44,6 +53,11 @@ const Register: React.FC = () => {
         注册
       </Typography>
       <Box sx={{ mt: 2 }}>
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
