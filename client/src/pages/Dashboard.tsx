@@ -43,6 +43,7 @@ const Dashboard: React.FC = () => {
   // const [data, setData] = useState<ChartData[]>([]);
   const [data, setData] = useState<MonthlyData[]>([]);
   const [latestData, setLatestData] = useState<HydroData | null>(null);
+  const [alerts, setAlerts] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -90,6 +91,7 @@ const Dashboard: React.FC = () => {
               return new Date(item.date) > new Date(latest.date) ? item : latest;
             }, rawData[0]);
             setLatestData(latestEntry);
+            generateAlerts(latestEntry);
           }
         })
         .catch(error => {
@@ -107,6 +109,23 @@ const Dashboard: React.FC = () => {
       if (dissolvedOxygen >= 2 && permanganate_index <= 15 && ammonia_nitrogen <= 2 && total_phosphorus <= 0.4) return 1;
     }
     return 0;
+  };
+
+  const generateAlerts = (data: HydroData) => {
+    const alerts: string[] = [];
+    if (data.dissolved_oxygen < 3) {
+      alerts.push("溶解氧低于3 mg/L，水质较差！");
+    }
+    if (data.permanganate_index > 10) {
+      alerts.push("高锰酸盐指数超过10 mg/L，水质较差！");
+    }
+    if (data.ammonia_nitrogen > 1.5) {
+      alerts.push("氨氮超过1.5 mg/L，水质较差！");
+    }
+    if (data.total_phosphorus > 0.3) {
+      alerts.push("总磷超过0.3 mg/L，水质较差！");
+    }
+    setAlerts(alerts);
   };
 
   if (!isAuthenticated) {
@@ -150,13 +169,12 @@ const Dashboard: React.FC = () => {
             <Card>
               <CardHeader title="预警信息" />
               <CardContent>
-                <Alert severity="error">这是一条错误信息！</Alert>
-                <Divider sx={{ my: 1 }} />
-                <Alert severity="warning">这是一条预警信息！</Alert>
-                <Divider sx={{ my: 1 }} />
-                <Alert severity="error">这是一条错误信息！</Alert>
-                <Divider sx={{ my: 1 }} />
-                <Alert severity="warning">这是一条预警信息！</Alert>
+                {alerts.map((alert, index) => (
+                  <React.Fragment key={index}>
+                    <Alert severity="warning">{alert}</Alert>
+                    {index < alerts.length - 1 && <Divider sx={{ my: 1 }} />}
+                  </React.Fragment>
+                ))}
               </CardContent>
             </Card>
           </Grid>
