@@ -20,6 +20,17 @@ import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const calculateScore = (dissolvedOxygen: number, permanganate_index: number, ammonia_nitrogen: number, total_phosphorus: number, pH: number): number => {
+    if (pH >= 6 && pH <= 9) {
+        if (dissolvedOxygen >= 7.5 && permanganate_index <= 2 && ammonia_nitrogen <= 0.15 && total_phosphorus <= 0.02) return 5;
+        if (dissolvedOxygen >= 6 && permanganate_index <= 4 && ammonia_nitrogen <= 0.5 && total_phosphorus <= 0.1) return 4;
+        if (dissolvedOxygen >= 5 && permanganate_index <= 6 && ammonia_nitrogen <= 1 && total_phosphorus <= 0.2) return 3;
+        if (dissolvedOxygen >= 3 && permanganate_index <= 10 && ammonia_nitrogen <= 1.5 && total_phosphorus <= 0.3) return 2;
+        if (dissolvedOxygen >= 2 && permanganate_index <= 15 && ammonia_nitrogen <= 2 && total_phosphorus <= 0.4) return 1;
+    }
+    return 0;
+};
+
 interface HydroData {
   id: number;
   location: string;
@@ -43,6 +54,7 @@ const DataCenter: React.FC = () => {
   const [newData, setNewData] = useState<Partial<HydroData>>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [hasZeroSiteCondition, setHasZeroSiteCondition] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -81,11 +93,6 @@ const DataCenter: React.FC = () => {
   };
 
   const handleImport = async () => {
-    // 1. open file dialog
-    // 2. send post request with `file: ...` to /api/import/hydrodata
-    // 3. refresh data
-    // 4. clear the form
-    
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".csv";
@@ -94,7 +101,6 @@ const DataCenter: React.FC = () => {
       if (!file) {
         return;
       }
-      // post the file content in json format: { "csv": "..." }
       const formData = new FormData();
       formData.append("csv", file);
       try {
@@ -134,6 +140,15 @@ const DataCenter: React.FC = () => {
     setPage(0);
   };
 
+  useEffect(() => {
+    const currentRows = hydroData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const zeroSiteConditionExists = currentRows.some(row => row.site_condition === "0");
+    setHasZeroSiteCondition(zeroSiteConditionExists);
+    if (zeroSiteConditionExists) {
+      window.alert("当前页包含现场情况为0的数据！");
+    }
+  }, [page, rowsPerPage, hydroData]);
+
   if (!isAuthenticated) {
     return null;
   }
@@ -143,7 +158,6 @@ const DataCenter: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         数据中心
       </Typography>
-      <Alert severity="info">此处为示例信息</Alert>
       <Divider sx={{ my: 2 }} />
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -331,29 +345,34 @@ const DataCenter: React.FC = () => {
               <TableCell>总磷</TableCell>
               <TableCell>总氮</TableCell>
               <TableCell>现场情况</TableCell>
+              <TableCell>得分</TableCell> {/* 新增的表头 */}
             </TableRow>
           </TableHead>
           <TableBody>
             {(rowsPerPage > 0
               ? hydroData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : hydroData
-                        ).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.location}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.water_temperature}</TableCell>
-                <TableCell>{row.pH}</TableCell>
-                <TableCell>{row.dissolved_oxygen}</TableCell>
-                <TableCell>{row.conductivity}</TableCell>
-                <TableCell>{row.turbidity}</TableCell>
-                <TableCell>{row.permanganate_index}</TableCell>
-                <TableCell>{row.ammonia_nitrogen}</TableCell>
-                <TableCell>{row.total_phosphorus}</TableCell>
-                <TableCell>{row.total_nitrogen}</TableCell>
-                <TableCell>{row.site_condition || "N/A"}</TableCell>
-              </TableRow>
-            ))}
+            ).map((row) => {
+              const score = calculateScore(row.dissolved_oxygen, row.permanganate_index, row.ammonia_nitrogen, row.total_phosphorus, row.pH);
+              return (
+                <TableRow key={row.id}>
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.location}</TableCell>
+                  <TableCell>{row.date}</TableCell>
+                  <TableCell>{row.water_temperature}</TableCell>
+                  <TableCell>{row.pH}</TableCell>
+                  <TableCell>{row.dissolved_oxygen}</TableCell>
+                  <TableCell>{row.conductivity}</TableCell>
+                  <TableCell>{row.turbidity}</TableCell>
+                  <TableCell>{row.permanganate_index}</TableCell>
+                  <TableCell>{row.ammonia_nitrogen}</TableCell>
+                  <TableCell>{row.total_phosphorus}</TableCell>
+                  <TableCell>{row.total_nitrogen}</TableCell>
+                  <TableCell>{row.site_condition || "N/A"}</TableCell>
+                  <TableCell>{score}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         <TablePagination
@@ -375,4 +394,3 @@ const DataCenter: React.FC = () => {
 };
 
 export default DataCenter;
-
