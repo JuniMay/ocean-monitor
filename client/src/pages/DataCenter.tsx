@@ -54,7 +54,6 @@ const DataCenter: React.FC = () => {
   const [newData, setNewData] = useState<Partial<HydroData>>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [hasZeroSiteCondition, setHasZeroSiteCondition] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -140,14 +139,12 @@ const DataCenter: React.FC = () => {
     setPage(0);
   };
 
-  useEffect(() => {
-    const currentRows = hydroData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-    const zeroSiteConditionExists = currentRows.some(row => row.site_condition === "0");
-    setHasZeroSiteCondition(zeroSiteConditionExists);
-    if (zeroSiteConditionExists) {
-      window.alert("当前页包含现场情况为0的数据！");
+  const handleRowClick = (row: HydroData) => {
+    const score = calculateScore(row.dissolved_oxygen, row.permanganate_index, row.ammonia_nitrogen, row.total_phosphorus, row.pH);
+    if (score === 0) {
+      alert(`预警：ID为${row.id}的记录得分为0！`);
     }
-  }, [page, rowsPerPage, hydroData]);
+  };
 
   if (!isAuthenticated) {
     return null;
@@ -355,7 +352,7 @@ const DataCenter: React.FC = () => {
             ).map((row) => {
               const score = calculateScore(row.dissolved_oxygen, row.permanganate_index, row.ammonia_nitrogen, row.total_phosphorus, row.pH);
               return (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
                   <TableCell>{row.id}</TableCell>
                   <TableCell>{row.location}</TableCell>
                   <TableCell>{row.date}</TableCell>
