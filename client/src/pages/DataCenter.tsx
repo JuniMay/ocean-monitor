@@ -55,6 +55,7 @@ const DataCenter: React.FC = () => {
   const [newData, setNewData] = useState<Partial<HydroData>>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedData, setSelectedData] = useState<HydroData | null>(null); // State for selected data
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -145,6 +146,7 @@ const DataCenter: React.FC = () => {
     if (score === 0) {
       alert(`预警：ID为${row.id}的记录得分为0！`);
     }
+    setSelectedData(row); // Set the selected data
   };
 
   if (!isAuthenticated) {
@@ -153,7 +155,7 @@ const DataCenter: React.FC = () => {
 
   return (
     <div>
-        <MapComponent />
+        {selectedData && <MapComponent data={selectedData} />}
       <Typography variant="h4" gutterBottom>
         数据中心
       </Typography>
