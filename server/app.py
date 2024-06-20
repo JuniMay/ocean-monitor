@@ -14,9 +14,9 @@ app = Flask(__name__)
 CORS(app)
 # Read database connection details from environment variables
 db_user = os.getenv('DB_USER', 'root')
-db_password = os.getenv('DB_PASSWORD', 'root')
+db_password = os.getenv('DB_PASSWORD', 'Tt102938!')
 db_host = os.getenv('DB_HOST', '127.0.0.1')
-db_port = os.getenv('DB_PORT', '3307')
+db_port = os.getenv('DB_PORT', '3306')
 db_name = os.getenv('DB_NAME', 'ocean_monitor')
 
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
@@ -199,26 +199,25 @@ def export_hydrodata():
 
         writer.writerow(
             [
-                "id",
-                "location",
-                "date",
-                "water_temperature",
+                "省份",
+                "监测时间",
+                "水温",
                 "pH",
-                "dissolved_oxygen",
-                "conductivity",
-                "turbidity",
-                "permanganate_index",
-                "ammonia_nitrogen",
-                "total_phosphorus",
-                "total_nitrogen",
-                "site_condition",
+                "溶解氧",
+                "电导率",
+                "浊度",
+                "高锰酸盐指数",
+                "氨氮",
+                "总磷",
+                "总氮",
+                "站点情况",
             ]
         )
 
         for row in hydrodata:
             writer.writerow(
                 [
-                    row.id,
+
                     row.location,
                     row.date.strftime("%Y-%m-%d"),
                     row.water_temperature,
