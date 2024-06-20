@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MapComponent from './MapComponent';
 
 const calculateScore = (dissolvedOxygen: number, permanganate_index: number, ammonia_nitrogen: number, total_phosphorus: number, pH: number): number => {
     if (pH >= 6 && pH <= 9) {
@@ -152,6 +153,7 @@ const DataCenter: React.FC = () => {
 
   return (
     <div>
+        <MapComponent />
       <Typography variant="h4" gutterBottom>
         数据中心
       </Typography>
