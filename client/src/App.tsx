@@ -7,7 +7,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import UnderWaterSystem from "./pages/UnderWaterSystem";
 import DataCenter from "./pages/DataCenter";
-import IntelligentCenter from "./pages/IntelligentCenter";
+
 import AdminManagement from "./pages/AdminManagement";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
@@ -25,7 +25,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/underwater" element={<UnderWaterSystem />} />
           <Route path="/data" element={<DataCenter />} />
-          <Route path="/intelligent" element={<IntelligentCenter />} />
+
           <Route path="/admin" element={<AdminManagement />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>

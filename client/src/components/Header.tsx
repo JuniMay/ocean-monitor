@@ -75,9 +75,7 @@ const Header: React.FC = () => {
               <MenuItem component={Link} to="/underwater" onClick={handleMenuClose}>
                 <WaterIcon /> 水下系统
               </MenuItem>
-              <MenuItem component={Link} to="/intelligent" onClick={handleMenuClose}>
-                <AutoAwesomeIcon /> 智能中心
-              </MenuItem>
+
               {user?.role === "admin" && (
                 <MenuItem component={Link} to="/admin" onClick={handleMenuClose}>
                   <AdminPanelSettingsIcon /> 管理员
@@ -138,14 +136,7 @@ const Header: React.FC = () => {
             >
               水下系统
             </Button>
-            <Button
-              startIcon={<AutoAwesomeIcon />}
-              color="inherit"
-              component={Link}
-              to="/intelligent"
-            >
-              智能中心
-            </Button>
+
             {user?.role === "admin" && (
               <Button
                 startIcon={<AdminPanelSettingsIcon />}
