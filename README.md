@@ -8,6 +8,8 @@ GitHub 地址：[https://github.com/JuniMay/ocean-monitor](https://github.com/Ju
 
 ## 运行
 
+### 手动安装
+
 确保安装了 Node.js 以及 MySQL。
 
 首先在 `server/app.py` 中配置数据库连接信息。之后运行以下命令：
@@ -25,22 +27,22 @@ npm install
 npm start
 ```
 
-或者，使用Docker:
+### 使用Docker:
 
 ```bash
 docker-compose up --build
 ```
 
+Docker端口映射如下：
+
+- Flask 服务器: `localhost:11451` 映射到对应的 Docker 容器的端口 `5000`
+- React 客户端: `localhost:19198` 映射到对应的 Docker 容器的端口 `3000`
+- MySQL 数据库: `localhost:23306` 映射到对应的 Docker 容器的端口 `3306`
+- Locust 测试: `localhost:18089` 映射到对应的 Docker 容器的端口 `8089`
+
+请注意，进行性能测试时请在 `docker-compose.yml` 中配置服务端环境变量 `DEPLOY=production` 以启用 gunicorn 以获得最佳性能。
+
 已经挂载容器的`/app`目录到`client`和`server`，直接更新代码可触发Flask和React的热重载功能。
-
-我们使用locust进行压力和并发测试：
-
-```bash
-pip install locust
-locust -f scripts/load_test.py --host=http://127.0.0.1:11451/
-```
-
-之后访问[http://0.0.0.0:8089](http://0.0.0.0:8089)即可在locust的图形界面上进行并发测试。
 
 ## 项目运行界面
 
