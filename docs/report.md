@@ -138,8 +138,6 @@
 - 处理数据请求和响应，执行业务逻辑
 - 数据库操作逻辑
 
-好的，我将去除无关的冗余代码部分，保留并注释关键部分，同时优化布局。以下是优化后的代码段：
-
 #### api设计
 
 
@@ -417,7 +415,81 @@ message": "No file part"}), 400
 
 ### UI 设计
 
-to be continue
+## UI设计
+
+#### 使用的CSS框架
+
+在海洋牧场智慧可视化系统中，我们选择使用了 Material-UI (MUI) 作为主要的UI组件库。Material-UI 提供了一套现代、响应式的组件，帮助我们快速搭建出美观的用户界面。
+
+#### 响应式设计/移动设备支持
+
+我们的项目非常注重响应式设计，确保在不同尺寸的设备上都能有良好的用户体验。我们主要通过以下方式实现响应式设计：
+
+- **使用MUI的Grid系统**：MUI提供了强大的Grid系统，帮助我们实现页面布局的响应式设计。通过调整Grid的属性，我们可以轻松地在不同的屏幕尺寸下调整布局。
+- **使用Media Queries**：我们在组件中使用了MUI的`useMediaQuery`钩子，根据屏幕尺寸动态调整组件的显示内容和布局。例如，在导航栏中，我们根据屏幕尺寸选择不同的菜单显示方式。
+
+```tsx
+const theme = useTheme();
+const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+```
+
+#### 主要界面设计
+
+##### 导航栏
+
+导航栏是整个系统的核心部分，我们在设计时考虑到了不同用户角色的需求，以及在移动设备和桌面设备上的不同展示方式。
+
+- **桌面设备**：在桌面设备上，导航栏展示完整的菜单按钮，用户可以直接点击进行页面跳转。
+- **移动设备**：在移动设备上，导航栏折叠为一个菜单图标，点击后会弹出菜单列表，用户可以选择需要跳转的页面。
+
+```tsx
+<AppBar position="static">
+  <Toolbar>
+    <Typography variant="h6" component="div" margin={2} sx={{ flexGrow: 1 }}>
+      海洋牧场监测系统
+    </Typography>
+    {isMobile ? (
+      <>
+        <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleMenuOpen}>
+          <MenuIcon />
+        </IconButton>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+          <MenuItem component={Link} to="/home" onClick={handleMenuClose}>
+            <HomeIcon /> 首页
+          </MenuItem>
+          {/* 其他菜单项 */}
+        </Menu>
+      </>
+    ) : (
+      <>
+        <Button startIcon={<HomeIcon />} color="inherit" component={Link} to="/home">
+          首页
+        </Button>
+        {/* 其他按钮 */}
+      </>
+    )}
+  </Toolbar>
+</AppBar>
+```
+
+##### 数据中心
+
+数据中心页面展示了各种监测数据，包括传感器数据、水质数据等。我们使用了 Recharts 库来展示图表，确保数据的可视化效果优美且直观。
+
+```tsx
+<ResponsiveContainer width="100%" height={400}>
+  <LineChart data={data}>
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+  </LineChart>
+</ResponsiveContainer>
+```
+
+通过使用Material-UI和Recharts，我们不仅提高了开发效率，还确保了系统在不同设备上的一致性和用户体验。响应式设计和现代化的UI组件，使得我们的海洋牧场智慧可视化系统在界面美观性和功能性上都达到了较高的标准。
 
 ## 系统测试
 
@@ -459,7 +531,7 @@ to be continue
 
 - 梅骏逸:负责项目框架的搭建，编写数据预处理和数据导入部分，运行调试项目。
 - 汤志文:负责项目框架的搭建，完成了地图和天气接口化，完成数据导出，实现手动输入添加数据的功能，完成数据分页显示，运行调试项目。
-- 熊宇轩:完善用户信息模块（不同用户权限不同且可进行切换），编写docker compose，实现项目移动端化，完成预警信息公能，运行调试项目。
+- 熊宇轩:完善用户信息模块（不同用户权限不同且可进行切换），编写docker compose，实现项目移动端化，完成预警信息功能，运行调试项目。
 - 李潇逸:实现数据分析和可视化（可视化显示温度和pH），运行调试项目。
 - 刘宇宸:编写地图和天气模块（未导入项目），运行调试项目。
 
