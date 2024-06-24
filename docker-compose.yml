@@ -50,5 +50,15 @@ services:
       timeout: 5s
       retries: 5
 
+  test:
+    build: ./test
+    ports:
+      - "18089:8089"
+    volumes:
+      - ./test:/locust
+    depends_on:
+      - server
+      - db
+
 volumes:
   db_data:
