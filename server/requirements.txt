@@ -6,3 +6,4 @@ werkzeug==3.0.3
 watchdog==4.0.1
 pandas==2.2.2
 cryptography==42.0.7
+gunicorn==22.0.0

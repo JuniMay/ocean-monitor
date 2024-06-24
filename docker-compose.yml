@@ -7,6 +7,7 @@ services:
       - "11451:5000"
     environment:
       - FLASK_ENV=development
+      # - DEPLOY=production # If set will use uvicorn
       - DB_USER=root
       - DB_PASSWORD=Tt102938!
       - DB_HOST=db
