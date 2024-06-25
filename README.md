@@ -27,7 +27,7 @@ npm install
 npm start
 ```
 
-### 使用Docker:
+### 使用 Docker
 
 ```bash
 docker-compose up --build
