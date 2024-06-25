@@ -107,7 +107,6 @@
 
 2. **模块设计**
    - **数据处理与分析模块**
-     - 数据采集与存储
      - 数据清洗与预处理
      - 数据分析与处理逻辑
 
@@ -139,7 +138,6 @@
 - 数据库操作逻辑
 
 #### api设计
-
 
 - 用户登录API
 
@@ -417,7 +415,7 @@ message": "No file part"}), 400
 
 ## UI设计
 
-#### 使用的CSS框架
+### 使用的CSS框架
 
 在海洋牧场智慧可视化系统中，我们选择使用了 Material-UI (MUI) 作为主要的UI组件库。Material-UI 提供了一套现代、响应式的组件，帮助我们快速搭建出美观的用户界面。
 
@@ -471,6 +469,53 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   </Toolbar>
 </AppBar>
 ```
+
+##### 仪表盘
+
+仪表盘对温度数据和pH数据进行了分析和可视化显示。以下是对原始数据进行处理的代码片段：
+
+```javascript
+const rawData = response.data;
+
+// 初始化一个对象monthlyData，用于存储每个月的总温度、总pH值及数据条目数
+const monthlyData = {};
+
+// 遍历原始数据，根据年月进行数据汇总
+rawData.forEach(item => {
+  const month = item.date.slice(0, 7); // 提取年月，格式为 'YYYY-MM'
+
+  // 初始化当前月份的数据
+  if (!monthlyData[month]) {
+    monthlyData[month] = { totalTemp: 0, totalPH: 0, count: 0 };
+  }
+
+  // 累加水温和pH值，并增加数据条目计数
+  monthlyData[month].totalTemp += item.water_temperature;
+  monthlyData[month].totalPH += item.pH;
+  monthlyData[month].count += 1;
+});
+
+// 格式化数据，计算每个月的平均温度和平均pH值
+const formattedData = Object.keys(monthlyData).map(month => ({
+  month, // 月份，格式为 'YYYY-MM'
+  averageTemperature: monthlyData[month].totalTemp / monthlyData[month].count, // 平均温度
+  averagePH: monthlyData[month].totalPH / monthlyData[month].count, // 平均pH值
+}));
+
+// 将处理后的数据设置到状态中，便于前端进行可视化显示
+setData(formattedData);
+```
+
+##### 代码说明
+
+1. **原始数据读取**：从响应中获取原始数据并存储在`rawData`中。
+2. **数据初始化与汇总**：
+    - 定义一个`monthlyData`对象，用于存储每个月的总温度、总pH值和数据条目数。
+    - 遍历`rawData`，根据日期提取年月，并在`monthlyData`对象中初始化相应月份的数据。
+    - 对每条数据中的水温和pH值进行累加，并增加数据条目计数。
+3. **数据格式化**：
+    - 遍历`monthlyData`对象的键，计算每个月的平均温度和平均pH值，并将结果存储在`formattedData`数组中。
+4. **数据设置**：将格式化后的数据通过`setData`函数设置到组件状态中，以便在前端进行可视化显示。
 
 ##### 数据中心
 
