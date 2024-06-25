@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Card>
               <CardHeader title="预警信息" />
               <CardContent>
@@ -178,17 +178,8 @@ const Dashboard: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4}>
-            <Card>
-              <CardHeader title="状态信息" />
-              <CardContent>
-                <Alert severity="info">这是一条状态信息提示</Alert>
-                <Divider sx={{ my: 1 }} />
-                <Alert severity="info">这是一条状态信息提示</Alert>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={4}>
+
+          <Grid item xs={6}>
             <Card>
               <CardHeader title="环境得分计算" />
               <CardContent>

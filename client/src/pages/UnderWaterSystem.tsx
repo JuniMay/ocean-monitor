@@ -38,16 +38,7 @@ const UnderWaterSystem: React.FC = () => {
               <Alert severity="info">此处为示例视频</Alert>
             </Card>
           </Grid>
-          <Grid item xs={4}>
-            <Card>
-              <CardHeader title="水下系统状态信息" />
-              <CardContent>
-                <Alert severity="info">这是一条水下系统状态信息提示</Alert>
-                <Divider sx={{ my: 1 }} />
-                <Alert severity="info">这是一条水下系统状态信息提示</Alert>
-              </CardContent>
-            </Card>
-          </Grid>
+          
           <Grid item xs={3}>
             <Card>
               <CardHeader title="水下环境得分" />
