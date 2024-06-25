@@ -10,8 +10,6 @@
 
 GitHub 地址：[https://github.com/JuniMay/ocean-monitor](https://github.com/JuniMay/ocean-monitor)
 
-安装、允许、调试等具体命令可参考 README 文件。
-
 ## 项目概述
 
 ### 开发背景
